@@ -1,0 +1,27 @@
+version: "3.3"
+volumes:
+  htdocs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=10.142.0.3
+      device: ":/var/nfs/general"
+services:
+  web:
+    image: tutum/apache-php
+    environment:
+      - ALLOW_OVERRIDE=true
+    volumes:
+      - type: volume
+        source: htdocs
+        target: /app
+    ports:
+      - "80:80"
+    networks:
+      - overlay
+    deploy:
+      replicas: 5
+      restart_policy:
+        condition: on-failure
+networks:
+  overlay:
